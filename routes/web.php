@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Post;
+use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,16 +48,35 @@ Route::get('post-old-2/{post}', function ($slug) { //Wild card gets passed to th
 //->whereAlpha('post')
 //->whereNumber('post')
 
-Route::get('post/{post}', function ($slug) {
-    $post = Post::find_alt($slug);
+Route::get('posts-old/{post}', function ($slug) {
+    $post = Post::findOrFail($slug);
     return view('post', [
         'post' => $post,
     ]);
 })->where('post', '[A-z_\-]+');
 
+Route::get('posts-old-2/{post}', function ($id) {
+    $post = Post::findOrFail($id);
+    return view('post', [
+        'post' => $post,
+    ]);
+});
+
+Route::get('posts/{post:slug}', function (Post $post) { //Route model binding variable name has to match wildcard for this to work. This gets the first post with the matching slug
+    return view('post', [
+        'post' => $post,
+    ]);
+});
+
 Route::get('/', function () {
-    $posts = Post::all_alt();
+    $posts = Post::with('category')->get();
     return view('posts', [
         'posts' => $posts,
+    ]);
+});
+
+Route::get('categories/{category:slug}', function (Category $category) {
+    return view('posts', [
+        'posts' => $category->posts,
     ]);
 });
