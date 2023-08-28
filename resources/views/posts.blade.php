@@ -30,7 +30,7 @@
                 </a>
             </h1>
             <p>
-                <a href="/categories/{{ $post->category->slug }}">{{ $post->category->name }}</a>
+                By <a href="/authors/{{ $post->author->username }}">{{ $post->author->name }}</a> in <a href="/categories/{{ $post->category->slug }}">{{ $post->category->name }}</a>
             </p>
             <div>
                 {{ $post->excerpt }}
@@ -40,10 +40,18 @@
 
 @endsection
 
-<!-- For components do:
+<!-- For components do: -->
 
 <x-layoutcomponent>
 
-    *content here*
+    @include ('_post-header')
+
+    <main class="max-w-6xl mx-auto mt-6 lg:mt-20 space-y-6">
+        @if ($posts->count())
+            <x-post-grid :posts="$posts"/>
+        @else
+            <p class="text-center">No posts yet. Please come back later.</p>
+        @endif
+    </main>
 
 </x-layoutcomponent>-->

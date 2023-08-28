@@ -1,12 +1,12 @@
-<!doctype html>
+<!--<!doctype html>
 
 <title>My Blog</title>
 <link rel="stylesheet" href="/app.css">
 
 <header>
-    @yield('banner')
+    @ yield('banner')
 </header>
 
 <body>
-    @yield('content') <!-- Any blade file that extends this basic layout can be loaded here by key -->
-</body>
+    @ yield('content') Any blade file that extends this basic layout can be loaded here by key
+</body> -->
