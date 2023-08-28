@@ -73,17 +73,21 @@ Route::get('/', function () {
     $posts = Post::latest()->with('category', 'author')->get(); //Latest will sort the database entries. You can pass a column name into the latest function. With is used to tackle to n+1 problem. All entries are fetched when the view is loaded using one sql query
     return view('posts', [
         'posts' => $posts,
+        'categories' => Category::all()
     ]);
-});
+})->name('home'); //Named route example
 
 Route::get('categories/{category:slug}', function (Category $category) {
     return view('posts', [
-        'posts' => $category->posts->load(['category', 'author']) //Eaager loading to avoid n+1 problem
+        'posts' => $category->posts->load(['category', 'author']), //Eaager loading to avoid n+1 problem
+        'categories' => Category::all(),
+        'currentCategory' => $category
     ]);
 });
 
 Route::get('authors/{author:username}', function (User $author) {
     return view('posts', [
-        'posts' => $author->posts->load(['category', 'author'])
+        'posts' => $author->posts->load(['category', 'author']),
+        'categories' => Category::all()
     ]);
 });
