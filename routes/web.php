@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PostsController;
 use App\Models\Post;
 use App\Models\Category;
 use App\Models\User;
@@ -63,19 +64,23 @@ Route::get('posts-old-2/{post}', function ($id) {
     ]);
 });
 
-Route::get('posts/{post:slug}', function (Post $post) { //Route model binding variable name has to match wildcard for this to work. This gets the first post with the matching slug
+Route::get('posts-old-3/{post:slug}', function (Post $post) { //Route model binding variable name has to match wildcard for this to work. This gets the first post with the matching slug
     return view('post', [
         'post' => $post,
     ]);
 });
 
-Route::get('/', function () {
+Route::get('posts/{post:slug}', [PostsController::class, 'show']);
+
+Route::get('/-old', function () {
     $posts = Post::latest()->with('category', 'author')->get(); //Latest will sort the database entries. You can pass a column name into the latest function. With is used to tackle to n+1 problem. All entries are fetched when the view is loaded using one sql query
     return view('posts', [
         'posts' => $posts,
         'categories' => Category::all()
     ]);
 })->name('home'); //Named route example
+
+Route::get('/', [PostsController::class, 'index'])->name('home'); //First example using a controller
 
 Route::get('categories/{category:slug}', function (Category $category) {
     return view('posts', [

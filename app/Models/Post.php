@@ -16,6 +16,20 @@ class Post extends Model
 
     protected $with = ["category", "author"]; //This makes eager loading the default. You don't have to include eager loading in the routes. Sometimes thios can cause relationships to be loaded even when you don't need them. You can disable the default using the withouf in the route.
     
+    public function scopeFilter($query, array $filters) //Laravel query scope
+    {
+        /*if ($filters['search'] ?? false) { //Null safe operator
+            $query
+            ->where('title', 'like', '%' . request('search') . '%')
+            ->orWhere('body', 'like', '%' . request('search') . '%');
+        }*/
+
+        $query->when($filters['search'] ?? false, fn ($query, $search) => //$filters['search'] is the search term it gets passed to the callback if it exists
+            $query
+            ->where('title', 'like', '%' . $search . '%')
+            ->orWhere('body', 'like', '%' . $search . '%')
+        );
+    }
     public function category()
     {
         return $this->belongsTo(Category::class); //This is how we define an eloquent relationship
