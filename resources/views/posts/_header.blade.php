@@ -6,25 +6,7 @@
     <div class="space-y-2 lg:space-y-0 lg:space-x-4 mt-4">
         <!--  Category -->
         <div class="relative lg:inline-flex bg-gray-100 rounded-xl">
-
-            <div x-data="{ show:false }" @click.away="show = false">
-                <x-dropdown>
-                    {{-- Trigger --}}
-                    <x-slot name="trigger">
-                        <button class="py-2 pl-3 pr-9 text-sm font-semibold w-full lg:w-32 text-left flex lg:inline-flex">
-                            {{ isset($currentCategory) ? ucwords($currentCategory->name) : 'Categories' }}
-                            <x-down-arrow class="absolute pointer-events-none" style="right: 12px;"/>
-                        </button>
-                    </x-slot>
-                    {{-- Links --}}
-
-                    <x-dropdown-item href="/" :active="request()->routeIs('home')">All</x-dropdown-item> <!-- Check if request is pointing to home page using name routes -->
-
-                    @foreach ($categories as $category)
-                        <x-dropdown-item href="/categories/{{$category->slug }}" :active="isset($currentCategory) && $currentCategory->is($category)">{{ $category->name }}</x-dropdown-item>
-                    @endforeach
-                </x-dropdown>
-            </div>
+            <x-category-dropdown/>
         </div>
 
         <!-- Other Filters -->
@@ -51,7 +33,11 @@
 
         <!-- Search -->
         <div class="relative flex lg:inline-flex items-center bg-gray-100 rounded-xl px-3 py-2">
-            <form method="GET" action="#">
+            <form method="GET" action="/">
+                {{-- This allows you to merge the form input with the current query string --}}
+                @if (request('category'))
+                    <input type="hidden" name="category" value="{{ request('category') }}">
+                @endif
                 <input type="text" name="search" placeholder="Find something"
                        class="bg-transparent placeholder-black font-semibold text-sm"
                        value="{{ request('search') }}">

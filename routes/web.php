@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\PostsController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SessionsController;
 use App\Models\Post;
 use App\Models\Category;
 use App\Models\User;
@@ -78,21 +80,26 @@ Route::get('/-old', function () {
         'posts' => $posts,
         'categories' => Category::all()
     ]);
-})->name('home'); //Named route example
+});
 
 Route::get('/', [PostsController::class, 'index'])->name('home'); //First example using a controller
 
-Route::get('categories/{category:slug}', function (Category $category) {
+/*Route::get('categories/{category:slug}', function (Category $category) {
     return view('posts', [
         'posts' => $category->posts->load(['category', 'author']), //Eaager loading to avoid n+1 problem
         'categories' => Category::all(),
         'currentCategory' => $category
     ]);
-});
+});*/
 
-Route::get('authors/{author:username}', function (User $author) {
-    return view('posts', [
-        'posts' => $author->posts->load(['category', 'author']),
-        'categories' => Category::all()
+Route::get('authors-old/{author:username}', function (User $author) {
+    return view('posts.index', [
+        'posts' => $author->posts->load(['category', 'author'])
     ]);
 });
+
+Route::get('register', [RegisterController::class, 'create'])->middleware('guest'); //Middleware is executed in betwen requests being received and passed to the controller
+Route::post('register', [RegisterController::class, 'store'])->middleware('guest');
+Route::post('logout', [SessionsController::class, 'destroy'])->middleware('auth');
+Route::get('login', [SessionsController::class, 'create'])->middleware('guest');
+Route::post('login', [SessionsController::class, 'store'])->middleware('guest');

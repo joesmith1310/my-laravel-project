@@ -25,9 +25,20 @@ class Post extends Model
         }*/
 
         $query->when($filters['search'] ?? false, fn ($query, $search) => //$filters['search'] is the search term it gets passed to the callback if it exists
-            $query
-            ->where('title', 'like', '%' . $search . '%')
-            ->orWhere('body', 'like', '%' . $search . '%')
+            $query->where(fn($query) =>
+                $query->where('title', 'like', '%' . $search . '%')
+                ->orWhere('body', 'like', '%' . $search . '%')
+            )
+        );
+        $query->when($filters['category'] ?? false, fn ($query, $category) =>
+            $query->whereHas('category', fn ($query) =>
+                $query->where('slug', $category) //Where slug matched category
+            ) 
+        );
+        $query->when($filters['author'] ?? false, fn ($query, $author) => 
+            $query->whereHas('author', fn ($query) => //Represents relationship (In this case as custom relationship defined below)
+                $query->where('username', $author)
+            ) 
         );
     }
     public function category()
@@ -35,13 +46,13 @@ class Post extends Model
         return $this->belongsTo(Category::class); //This is how we define an eloquent relationship
     }
 
-    public function user() //Laravel assumes this name corresponds to a foreign key
+    /*public function user() //Laravel assumes this name corresponds to a foreign key
     {
         return $this->belongsTo(User::class); //This is how we define an eloquent relationship
-    }
+    }*/
 
-    public function author() //Laravel can't find a foreign kley with this name. We have to provide one
+    public function author() //Laravel can't find a foreign key with this name. We have to provide one
     {
-        return $this->belongsTo(User::class, 'user_id'); //This is how we define an eloquent relationship
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

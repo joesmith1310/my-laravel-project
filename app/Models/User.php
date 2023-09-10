@@ -17,11 +17,13 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
+    /*protected $fillable = [
         'name',
         'email',
         'password',
-    ];
+    ];*/
+
+    protected $guarded = []; //Everything can be mass assigned if this is empty
 
     /**
      * The attributes that should be hidden for serialization.
@@ -40,8 +42,13 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'password' => 'hashed', //Hash password automatically like this
     ];
+
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = bcrypt($password); //Or like this using a mutator. Can also declare functions for get<name>Attribute. This is called an accessor
+    }
 
     public function posts() //Eloquent relationship
     {
